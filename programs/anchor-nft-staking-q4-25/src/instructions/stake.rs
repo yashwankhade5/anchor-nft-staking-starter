@@ -16,11 +16,47 @@ pub struct Stake<'info> {
     pub user: Signer<'info>,
 #[account(mut)]
 ///CHECK:unchecked account
-pub asset:UncheckedAccount<'info>
+pub asset:UncheckedAccount<'info>,
+  #[account(
+        mut,
+        constraint = collection.owner == &CORE_PROGRAM_ID,
+        constraint = !collection.data_is_empty()
+    )]
+    /// CHECK: Verified by CORE_PROGRAM as well
+    pub collection: UncheckedAccount<'info>,
+
+    #[account(
+        init,
+        payer = user,
+        space = StakeAccount::DISCRIMINATOR.len() + StakeAccount::INIT_SPACE,
+        seeds = [b"stake", config.key().as_ref(), asset.key().as_ref()],
+        bump,
+    )]
+    pub stake_account: Account<'info, StakeAccount>,
+
+    #[account(
+        mut,
+        seeds = [b"config".as_ref()],
+        bump = config.bump,
+    )]
+    pub config: Account<'info, StakeConfig>,
+
+    #[account(
+        mut,
+        seeds = [b"user".as_ref(), user.key().as_ref()],
+        bump = user_account.bump,
+    )]
+    pub user_account: Account<'info, UserAccount>,
+
+    #[account(address = CORE_PROGRAM_ID)]
+    /// CHECK: Verified by Address Constraint
+    pub core_program: UncheckedAccount<'info>,
+
+    pub system_program: Program<'info, System>,
 }
 
 impl<'info> Stake<'info> {
     pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
-TODO
+
     }
 }
