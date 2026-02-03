@@ -10,13 +10,17 @@ use crate::{
     state::{StakeAccount, StakeConfig, UserAccount},
 };
 
-// #[derive(Accounts)]
-// pub struct Stake<'info> {
-//TODO
-// }
+#[derive(Accounts)]
+pub struct Stake<'info> {
+ #[account(mut)]
+    pub user: Signer<'info>,
+#[account(mut)]
+///CHECK:unchecked account
+pub asset:UncheckedAccount<'info>
+}
 
-// impl<'info> Stake<'info> {
-//     pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
-//TODO
-//     }
-// }
+impl<'info> Stake<'info> {
+    pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
+TODO
+    }
+}
