@@ -57,6 +57,19 @@ pub asset:UncheckedAccount<'info>,
 
 impl<'info> Stake<'info> {
     pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
+          AddPluginV1CpiBuilder::new(&self.core_program.to_account_info())
+            .asset(&self.asset.to_account_info())
+            .collection(Some(&self.collection.to_account_info()))
+            .payer(&self.user.to_account_info())
+            .authority(None)
+            .system_program(&self.system_program.to_account_info())
+            .plugin(Plugin::FreezeDelegate(FreezeDelegate { frozen: true }))
+            .init_authority(PluginAuthority::Address {
+                address: self.stake_account.key(),
+            })
+            .invoke()?;
+
+        
 
     }
 }
