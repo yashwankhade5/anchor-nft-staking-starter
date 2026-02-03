@@ -54,6 +54,10 @@ impl<'info> Claim<'info> {
         };
         let amount = self.user_account.points as u64;
         let signer_seeds: &[&[&[u8]]] = &[&[b"config".as_ref(), &[self.config.bump]]];
+        mint_to(CpiContext::new_with_signer(self.token_program.to_account_info(), mint_acc,
+         signer_seeds),
+          amount)?;
+            self.user_account.points = 0;
 
         Ok(())
     }

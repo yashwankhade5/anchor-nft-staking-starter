@@ -9,7 +9,7 @@ pub struct InitializeConfig<'info> {
     pub admin: Signer<'info>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = admin,
         seeds = [b"config".as_ref()],
         bump,
