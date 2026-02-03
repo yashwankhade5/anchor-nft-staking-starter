@@ -12,12 +12,12 @@ use crate::{
 
 #[derive(Accounts)]
 pub struct Stake<'info> {
- #[account(mut)]
+    #[account(mut)]
     pub user: Signer<'info>,
-#[account(mut)]
-///CHECK:unchecked account
-pub asset:UncheckedAccount<'info>,
-  #[account(
+    #[account(mut)]
+    ///CHECK:unchecked account
+    pub asset: UncheckedAccount<'info>,
+    #[account(
         mut,
         constraint = collection.owner == &CORE_PROGRAM_ID,
         constraint = !collection.data_is_empty()
@@ -57,7 +57,7 @@ pub asset:UncheckedAccount<'info>,
 
 impl<'info> Stake<'info> {
     pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
-          AddPluginV1CpiBuilder::new(&self.core_program.to_account_info())
+        AddPluginV1CpiBuilder::new(&self.core_program.to_account_info())
             .asset(&self.asset.to_account_info())
             .collection(Some(&self.collection.to_account_info()))
             .payer(&self.user.to_account_info())
@@ -69,7 +69,12 @@ impl<'info> Stake<'info> {
             })
             .invoke()?;
 
-        
-
+        self.stake_account.set_inner(StakeAccount {
+            owner: *self.user.key,
+            mint: *self.asset.key,
+            staked_at: Clock::get()?.unix_timestamp,
+            bump: bumps.stake_account,
+        });
+        Ok(())
     }
 }
